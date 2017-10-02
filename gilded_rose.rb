@@ -11,38 +11,46 @@ class GildedRose
 
   def update_quality
     items.each do |item|
-      if item.name != Item::AGED_BRIE and item.name != Item::BACKSTAGE_PASSES
-        decrement_quality_for(item)
-      else
-        if item.name == Item::BACKSTAGE_PASSES
-          if item.sell_in >= 11
-            increment_quality_for(item, 1)
-          elsif item.sell_in < 11 && item.sell_in >=6
-            increment_quality_for(item, 2)
-          else
-            increment_quality_for(item, 3)
-          end
-        else
-          increment_quality_for(item, 1)
-        end
-      end
+      adjust_quality_at_start_for(item)
 
       decrement_sell_in_for(item)
 
-      if item.sell_in < 0
-        case item.name
-        when Item::AGED_BRIE
-          increment_quality_for(item, 1)
-        when Item::BACKSTAGE_PASSES
-          decrement_quality_for(item, item.quality)
-        else
-          decrement_quality_for(item)
-        end
-      end
+      adjust_quality_after_sell_in_decremented_for(item)
     end
   end
 
   private
+
+  def adjust_quality_at_start_for(item)
+    if item.name != Item::AGED_BRIE and item.name != Item::BACKSTAGE_PASSES
+      decrement_quality_for(item)
+    else
+      if item.name == Item::BACKSTAGE_PASSES
+        if item.sell_in >= 11
+          increment_quality_for(item, 1)
+        elsif item.sell_in < 11 && item.sell_in >=6
+          increment_quality_for(item, 2)
+        else
+          increment_quality_for(item, 3)
+        end
+      else
+        increment_quality_for(item, 1)
+      end
+    end
+  end
+
+  def adjust_quality_after_sell_in_decremented_for(item)
+    if item.sell_in < 0
+      case item.name
+      when Item::AGED_BRIE
+        increment_quality_for(item, 1)
+      when Item::BACKSTAGE_PASSES
+        decrement_quality_for(item, item.quality)
+      else
+        decrement_quality_for(item)
+      end
+    end
+  end
 
   def decrement_sell_in_for(item, decremented_value = 1)
     decrement_attribute_for(item, :sell_in, decremented_value)
