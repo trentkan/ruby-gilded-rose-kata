@@ -1,7 +1,7 @@
 #!/bin/bash
 for iteration in {0..15}
 do
-  ruby texttest_fixture.rb > spec/temp_files/day_"$iteration".txt
+  ruby texttest_fixture.rb  "$iteration" > spec/temp_files/day_"$iteration".txt
   if [ "$1" == "--override" ]; then
     cp spec/temp_files/day_"$iteration".txt spec/master_files/day_"$iteration".txt
   fi
