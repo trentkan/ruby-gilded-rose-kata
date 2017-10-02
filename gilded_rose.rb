@@ -1,5 +1,8 @@
 class GildedRose
 
+  MAX_QUALITY = 50
+  MIN_QUALITY = 0
+
   attr_reader :items
 
   def initialize(items)
@@ -9,20 +12,18 @@ class GildedRose
   def update_quality
     items.each do |item|
       if item.name != Item::AGED_BRIE and item.name != Item::BACKSTAGE_PASSES
-        if item.quality > 0
-          decrement_attribute_for(item, :quality)
-        end
+        decrement_quality_for(item)
       else
-        if item.quality < 50
+        if item.quality < MAX_QUALITY
           increment_quality_for(item, 1)
           if item.name == Item::BACKSTAGE_PASSES
             if item.sell_in < 11
-              if item.quality < 50
+              if item.quality < MAX_QUALITY
                 increment_quality_for(item, 1)
               end
             end
             if item.sell_in < 6
-              if item.quality < 50
+              if item.quality < MAX_QUALITY
                 increment_quality_for(item, 1)
               end
             end
@@ -35,14 +36,12 @@ class GildedRose
       if item.sell_in < 0
         if item.name != Item::AGED_BRIE
           if item.name != Item::BACKSTAGE_PASSES
-            if item.quality > 0
-              decrement_attribute_for(item, :quality)
-            end
+            decrement_quality_for(item)
           else
             item.quality = item.quality - item.quality
           end
         else
-          if item.quality < 50
+          if item.quality < MAX_QUALITY
             increment_quality_for(item, 1)
           end
         end
@@ -51,6 +50,10 @@ class GildedRose
   end
 
   private
+
+  def decrement_quality_for(item)
+    decrement_attribute_for(item, :quality) if item.quality > MIN_QUALITY
+  end
 
   def decrement_attribute_for(item, attribute)
     if item.name != Item::SULFURAS
