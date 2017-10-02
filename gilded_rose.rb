@@ -28,14 +28,13 @@ class GildedRose
       decrement_attribute_for(item, :sell_in)
 
       if item.sell_in < 0
-        if item.name != Item::AGED_BRIE
-          if item.name != Item::BACKSTAGE_PASSES
-            decrement_quality_for(item)
-          else
-            item.quality = item.quality - item.quality
-          end
-        else
+        case item.name
+        when Item::AGED_BRIE
           increment_quality_for(item, 1)
+        when Item::BACKSTAGE_PASSES
+          item.quality = item.quality - item.quality
+        else
+          decrement_quality_for(item)
         end
       end
     end
