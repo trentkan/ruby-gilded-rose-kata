@@ -22,7 +22,7 @@ class GildedRose
   def simulate_day_for(item)
     item.adjust_quality_at_start
 
-    item.decrement_sell_in_for
+    item.decrement_sell_in
 
     item.adjust_quality_after_sell_in_day_passed
   end

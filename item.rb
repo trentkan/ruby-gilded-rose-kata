@@ -5,6 +5,8 @@ class Item
   BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert".freeze
   AGED_BRIE = "Aged Brie".freeze
   SULFURAS = "Sulfuras, Hand of Ragnaros".freeze
+  DEXTERITY_VEST = "+5 Dexterity Vest".freeze
+  ELIXIR = "Elixir of the Mongoose".freeze
 
   MIN_QUALITY = 0.freeze
   MAX_QUALITY = 50.freeze
@@ -33,7 +35,7 @@ class Item
     end
   end
 
-  def decrement_sell_in_for
+  def decrement_sell_in
     decrement_attribute(:sell_in, 1)
   end
 

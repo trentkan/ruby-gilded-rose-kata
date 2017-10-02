@@ -90,4 +90,55 @@ describe Item do
       end
     end
   end
+
+  describe '#decrement_sell_in' do
+    let(:item) { Item.new(name=item_name, sell_in=original_sell_in_days, quality=10) }
+
+    context 'for sulfuras' do
+      let(:item_name) { Item::SULFURAS }
+      let(:original_sell_in_days) { 8 }
+      let(:expected_sell_in_days) { 8 }
+      it 'does not decrement the sell in days' do
+
+        item.decrement_sell_in
+
+        expect(item.sell_in).to eq(expected_sell_in_days)
+      end
+    end
+
+    context 'for all other items' do
+      let(:item_name) { [Item::AGED_BRIE, Item::BACKSTAGE_PASSES, Item::DEXTERITY_VEST, Item::ELIXIR].sample }
+      let(:original_sell_in_days) { 8 }
+      let(:expected_sell_in_days) { 7 }
+
+      it 'decrements the sell in days' do
+        item.decrement_sell_in
+
+        expect(item.sell_in).to eq(expected_sell_in_days)
+      end
+    end
+
+  end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
