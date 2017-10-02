@@ -30,6 +30,7 @@ class ItemWrapper
         increment_quality_by(1)
       end
     end
+    raise "Quality has gone below 0" if real_item.quality < 0
   end
 
   def decrement_sell_in
@@ -47,6 +48,7 @@ class ItemWrapper
         decrement_quality_by(1)
       end
     end
+    raise "Quality has gone below 0" if real_item.quality < 0
   end
 
   def to_s()
