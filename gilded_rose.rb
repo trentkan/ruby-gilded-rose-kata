@@ -25,14 +25,14 @@ class GildedRose
         end
       end
 
-      decrement_attribute_for(item, :sell_in)
+      decrement_sell_in_for(item)
 
       if item.sell_in < 0
         case item.name
         when Item::AGED_BRIE
           increment_quality_for(item, 1)
         when Item::BACKSTAGE_PASSES
-          item.quality = item.quality - item.quality
+          decrement_quality_for(item, item.quality)
         else
           decrement_quality_for(item)
         end
@@ -42,13 +42,17 @@ class GildedRose
 
   private
 
-  def decrement_quality_for(item)
-    decrement_attribute_for(item, :quality) if item.quality > MIN_QUALITY
+  def decrement_sell_in_for(item, decremented_value = 1)
+    decrement_attribute_for(item, :sell_in, decremented_value)
   end
 
-  def decrement_attribute_for(item, attribute)
+  def decrement_quality_for(item, decremented_value = 1)
+    decrement_attribute_for(item, :quality, decremented_value) if item.quality > MIN_QUALITY
+  end
+
+  def decrement_attribute_for(item, attribute, decremented_value)
     if item.name != Item::SULFURAS
-      decremented_attribute = item.public_send(attribute) - 1
+      decremented_attribute = item.public_send(attribute) - decremented_value
       instance_variable_as_symbol = "@#{attribute}".to_sym
 
       item.instance_variable_set(instance_variable_as_symbol, decremented_attribute)
