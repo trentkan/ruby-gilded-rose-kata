@@ -1,4 +1,4 @@
-require './item'
+require './item_wrapper'
 
 class GildedRose
 
@@ -13,7 +13,7 @@ class GildedRose
 
   def update_quality
     items.each do |item|
-      simulate_day_for(item)
+      simulate_day_for(ItemWrapper.new(item))
     end
   end
 
