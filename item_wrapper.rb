@@ -5,6 +5,7 @@ class ItemWrapper
   SULFURAS = "Sulfuras, Hand of Ragnaros".freeze
   DEXTERITY_VEST = "+5 Dexterity Vest".freeze
   ELIXIR = "Elixir of the Mongoose".freeze
+  CONJURED = "Conjured Mana Cake".freeze
 
   MIN_QUALITY = 0.freeze
   MAX_QUALITY = 50.freeze
@@ -57,7 +58,8 @@ class ItemWrapper
   attr_accessor :real_item
 
   def decrement_quality_by(decremented_value)
-    decrement_attribute(:quality, decremented_value) if real_item.quality > MIN_QUALITY
+    adjusted_decremented_value = real_item.name == CONJURED ? decremented_value * 2 : decremented_value
+    decrement_attribute(:quality, adjusted_decremented_value) if real_item.quality > MIN_QUALITY
   end
 
   def decrement_attribute(attribute, decremented_value)

@@ -68,7 +68,21 @@ describe ItemWrapper do
 
         it_behaves_like 'adjusts if necessary quality at the start'
       end
+    end
 
+    context 'for conjured items' do
+      let(:original_quality) { 8 }
+      let(:expected_quality) { 6 }
+      let(:item) { Item.new(name=ItemWrapper::CONJURED, sell_in=1, quality=original_quality) }
+
+      it_behaves_like 'adjusts if necessary quality at the start'
+
+      context 'with an existing quality of 0' do
+        let(:original_quality) { 0 }
+        let(:expected_quality) { 0 }
+
+        it_behaves_like 'adjusts if necessary quality at the start'
+      end
     end
 
     context 'for sulfuras' do
@@ -176,6 +190,34 @@ describe ItemWrapper do
 
         it_behaves_like 'adjusts quality if necessary after sell in day passed'
       end
+    end
+
+    context 'for conjured items' do
+      let(:original_quality) { 8 }
+      let(:sell_in_days) { 2 }
+      let(:item) { Item.new(name=ItemWrapper::CONJURED, sell_in=sell_in_days, quality=original_quality) }
+
+      context 'sell in day has not passed (are not negative)' do
+        let(:expected_quality) { 8 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+
+      context 'sell in day has passed' do
+        let(:expected_quality) { 6 }
+        let(:sell_in_days) { -1 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+
+
+        context 'with an existing quality of 0' do
+          let(:original_quality) { 0 }
+          let(:expected_quality) { 0 }
+
+          it_behaves_like 'adjusts quality if necessary after sell in day passed'
+        end
+      end
+
     end
 
     context 'for sulfuras' do
