@@ -29,10 +29,10 @@ describe Item do
     context 'for backstage passes' do
       let(:original_quality) { 8 }
       let(:item) { Item.new(name=Item::BACKSTAGE_PASSES, sell_in=sell_in_days, quality=original_quality) }
+      let(:sell_in_days) { 11 }
 
       context 'more than 10 days old' do
         let(:expected_quality) { 9 }
-        let(:sell_in_days) { 11 }
 
         it_behaves_like 'the items quality adjustment behavior'
       end
@@ -57,6 +57,14 @@ describe Item do
 
         it_behaves_like 'the items quality adjustment behavior'
       end
+
+      context 'with an existing quality of 50' do
+        let(:expected_quality) { 50 }
+        let(:original_quality) { 50 }
+
+        it_behaves_like 'the items quality adjustment behavior'
+      end
+
     end
 
     context 'for sulfuras' do
