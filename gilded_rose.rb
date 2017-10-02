@@ -1,37 +1,37 @@
 class GildedRose
 
+  attr_reader :items
+
   def initialize(items)
     @items = items
   end
 
-  def update_quality()
-    @items.each do |item|
+  def update_quality
+    items.each do |item|
       if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert"
         if item.quality > 0
-          if item.name != "Sulfuras, Hand of Ragnaros"
-            item.quality = item.quality - 1
-          end
+          decrement_attribute_for(item, :quality)
         end
       else
         if item.quality < 50
-          item.quality = item.quality + 1
+          increment_quality_for(item, 1)
           if item.name == "Backstage passes to a TAFKAL80ETC concert"
             if item.sell_in < 11
               if item.quality < 50
-                item.quality = item.quality + 1
+                increment_quality_for(item, 1)
               end
             end
             if item.sell_in < 6
               if item.quality < 50
-                item.quality = item.quality + 1
+                increment_quality_for(item, 1)
               end
             end
           end
         end
       end
-      if item.name != "Sulfuras, Hand of Ragnaros"
-        item.sell_in = item.sell_in - 1
-      end
+
+      decrement_attribute_for(item, :sell_in)
+
       if item.sell_in < 0
         if item.name != "Aged Brie"
           if item.name != "Backstage passes to a TAFKAL80ETC concert"
@@ -45,11 +45,26 @@ class GildedRose
           end
         else
           if item.quality < 50
-            item.quality = item.quality + 1
+            increment_quality_for(item, 1)
           end
         end
       end
     end
+  end
+
+  private
+
+  def decrement_attribute_for(item, attribute)
+    if item.name != "Sulfuras, Hand of Ragnaros"
+      decremented_attribute = item.public_send(attribute) - 1
+      instance_variable_as_symbol = "@#{attribute}".to_sym
+
+      item.instance_variable_set(instance_variable_as_symbol, decremented_attribute)
+    end
+  end
+
+  def increment_quality_for(item, added_value)
+    item.quality = item.quality + added_value
   end
 end
 

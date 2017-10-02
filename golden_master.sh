@@ -1,5 +1,5 @@
 #!/bin/bash
-for iteration in {0..15}
+for iteration in {0..16}
 do
   ruby texttest_fixture.rb  "$iteration" > spec/temp_files/day_"$iteration".txt
   if [ "$1" == "--override" ]; then
