@@ -1,9 +1,11 @@
 require File.join(File.dirname(__FILE__), 'item')
 
 describe Item do
+
+
   describe '#adjust_quality_at_start' do
 
-    shared_examples 'the items quality adjustment behavior' do
+    shared_examples 'adjusts if necessary quality at the start' do
       it 'makes the appropriate change to the quality' do
         item.adjust_quality_at_start
 
@@ -16,13 +18,13 @@ describe Item do
       let(:expected_quality) { 9 }
       let(:item) { Item.new(name=Item::AGED_BRIE, sell_in=1, quality=original_quality) }
 
-      it_behaves_like 'the items quality adjustment behavior'
+      it_behaves_like 'adjusts if necessary quality at the start'
 
       context 'with an existing quality of 50' do
         let(:original_quality) { 50 }
         let(:expected_quality) { 50 }
 
-        it_behaves_like 'the items quality adjustment behavior'
+        it_behaves_like 'adjusts if necessary quality at the start'
       end
     end
 
@@ -34,35 +36,35 @@ describe Item do
       context 'more than 10 days old' do
         let(:expected_quality) { 9 }
 
-        it_behaves_like 'the items quality adjustment behavior'
+        it_behaves_like 'adjusts if necessary quality at the start'
       end
 
       context 'exactly 10 days old' do
         let(:expected_quality) { 10 }
         let(:sell_in_days) { 10 }
 
-        it_behaves_like 'the items quality adjustment behavior'
+        it_behaves_like 'adjusts if necessary quality at the start'
       end
 
       context 'at least 6 days old' do
         let(:expected_quality) { 10 }
         let(:sell_in_days) { 6 }
 
-        it_behaves_like 'the items quality adjustment behavior'
+        it_behaves_like 'adjusts if necessary quality at the start'
       end
 
       context 'less than 6 days old' do
         let(:expected_quality) { 11 }
         let(:sell_in_days) { 5 }
 
-        it_behaves_like 'the items quality adjustment behavior'
+        it_behaves_like 'adjusts if necessary quality at the start'
       end
 
       context 'with an existing quality of 50' do
         let(:expected_quality) { 50 }
         let(:original_quality) { 50 }
 
-        it_behaves_like 'the items quality adjustment behavior'
+        it_behaves_like 'adjusts if necessary quality at the start'
       end
 
     end
@@ -72,21 +74,21 @@ describe Item do
       let(:expected_quality) { 8 }
       let(:item) { Item.new(name=Item::SULFURAS, sell_in=1, quality=original_quality) }
 
-      it_behaves_like 'the items quality adjustment behavior'
+      it_behaves_like 'adjusts if necessary quality at the start'
     end
 
     context 'for all other items' do
       let(:original_quality) { 7 }
       let(:expected_quality) { 6 }
-      let(:item) { Item.new(name="Elixir of the Mongoose", sell_in=1, quality=original_quality) }
+      let(:item) { Item.new(name=[Item::DEXTERITY_VEST, Item::ELIXIR].sample, sell_in=1, quality=original_quality) }
 
-      it_behaves_like 'the items quality adjustment behavior'
+      it_behaves_like 'adjusts if necessary quality at the start'
 
       context 'with an existing quality of 0' do
         let(:original_quality) { 0 }
         let(:expected_quality) { 0 }
 
-        it_behaves_like 'the items quality adjustment behavior'
+        it_behaves_like 'adjusts if necessary quality at the start'
       end
     end
   end
@@ -117,7 +119,100 @@ describe Item do
         expect(item.sell_in).to eq(expected_sell_in_days)
       end
     end
+  end
 
+  describe '#adjust_quality_after_sell_in_day_passed' do
+
+    shared_examples 'adjusts quality if necessary after sell in day passed' do
+      it 'makes the appropriate change to the quality' do
+        item.adjust_quality_after_sell_in_day_passed
+
+        expect(item.quality).to eq expected_quality
+      end
+    end
+
+    context 'for aged brie' do
+      let(:item) { Item.new(name=Item::AGED_BRIE, sell_in=sell_in_days, quality=original_quality) }
+      let(:original_quality) { 10 }
+      let(:sell_in_days) { 2 }
+
+      context 'sell in day has not passed (are not negative)' do
+        let(:expected_quality) { 10 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+
+      context 'sell in day has passed' do
+        let(:expected_quality) { 11 }
+        let(:sell_in_days) { -1 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+
+      context 'with an existing quality of 50' do
+        let(:original_quality) { 50 }
+        let(:expected_quality) { 50 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+    end
+
+    context 'for backstage passes' do
+      let(:item) { Item.new(name=Item::BACKSTAGE_PASSES, sell_in=sell_in_days, quality=original_quality) }
+      let(:original_quality) { 10 }
+      let(:sell_in_days) { 2 }
+
+      context 'sell in day has not passed (are not negative)' do
+        let(:expected_quality) { 10 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+
+      context 'sell in day has passed' do
+        let(:expected_quality) { 0 }
+        let(:sell_in_days) { -1 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+    end
+
+    context 'for sulfuras' do
+      let(:item) { Item.new(name=Item::SULFURAS, sell_in=sell_in_days, quality=original_quality) }
+      let(:original_quality) { 10 }
+      let(:sell_in_days) { 2 }
+
+      context 'sell in day has not passed (are not negative)' do
+        let(:expected_quality) { 10 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+
+      context 'sell in day has passed' do
+        let(:expected_quality) { 10 }
+        let(:sell_in_days) { -1 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+    end
+
+    context 'for all other items' do
+      let(:item) { Item.new(name=[Item::ELIXIR, Item::DEXTERITY_VEST].sample, sell_in=sell_in_days, quality=original_quality) }
+      let(:original_quality) { 10 }
+      let(:sell_in_days) { 2 }
+
+      context 'sell in day has not passed (are not negative)' do
+        let(:expected_quality) { 10 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+
+      context 'sell in day has passed' do
+        let(:expected_quality) { 9 }
+        let(:sell_in_days) { -1 }
+
+        it_behaves_like 'adjusts quality if necessary after sell in day passed'
+      end
+    end
   end
 end
 
