@@ -14,14 +14,16 @@ class GildedRose
       if item.name != Item::AGED_BRIE and item.name != Item::BACKSTAGE_PASSES
         decrement_quality_for(item)
       else
-        increment_quality_for(item, 1)
         if item.name == Item::BACKSTAGE_PASSES
-          if item.sell_in < 11
+          if item.sell_in >= 11
             increment_quality_for(item, 1)
+          elsif item.sell_in < 11 && item.sell_in >=6
+            increment_quality_for(item, 2)
+          else
+            increment_quality_for(item, 3)
           end
-          if item.sell_in < 6
-            increment_quality_for(item, 1)
-          end
+        else
+          increment_quality_for(item, 1)
         end
       end
 
@@ -60,7 +62,10 @@ class GildedRose
   end
 
   def increment_quality_for(item, added_value)
-    item.quality = item.quality + added_value if item.quality < MAX_QUALITY
+    if item.quality < MAX_QUALITY
+      new_quality = item.quality + added_value
+      item.quality = new_quality <= 50 ? new_quality : 50
+    end
   end
 end
 
