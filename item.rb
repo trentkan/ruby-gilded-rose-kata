@@ -33,8 +33,8 @@ class Item
     end
   end
 
-  def decrement_sell_in_for(decremented_value = 1)
-    decrement_attribute(:sell_in, decremented_value)
+  def decrement_sell_in_for
+    decrement_attribute(:sell_in, 1)
   end
 
   def adjust_quality_after_sell_in_day_passed
