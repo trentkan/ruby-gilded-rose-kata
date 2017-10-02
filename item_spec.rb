@@ -12,9 +12,51 @@ describe Item do
     end
 
     context 'for aged brie' do
+      let(:original_quality) { 8 }
+      let(:expected_quality) { 9 }
+      let(:item) { Item.new(name=Item::AGED_BRIE, sell_in=1, quality=original_quality) }
+
+      it_behaves_like 'the items quality adjustment behavior'
+
+      context 'with an existing quality of 50' do
+        let(:original_quality) { 50 }
+        let(:expected_quality) { 50 }
+
+        it_behaves_like 'the items quality adjustment behavior'
+      end
     end
 
     context 'for backstage passes' do
+      let(:original_quality) { 8 }
+      let(:item) { Item.new(name=Item::BACKSTAGE_PASSES, sell_in=sell_in_days, quality=original_quality) }
+
+      context 'more than 10 days old' do
+        let(:expected_quality) { 9 }
+        let(:sell_in_days) { 11 }
+
+        it_behaves_like 'the items quality adjustment behavior'
+      end
+
+      context 'exactly 10 days old' do
+        let(:expected_quality) { 10 }
+        let(:sell_in_days) { 10 }
+
+        it_behaves_like 'the items quality adjustment behavior'
+      end
+
+      context 'at least 6 days old' do
+        let(:expected_quality) { 10 }
+        let(:sell_in_days) { 6 }
+
+        it_behaves_like 'the items quality adjustment behavior'
+      end
+
+      context 'less than 6 days old' do
+        let(:expected_quality) { 11 }
+        let(:sell_in_days) { 5 }
+
+        it_behaves_like 'the items quality adjustment behavior'
+      end
     end
 
     context 'for sulfuras' do
